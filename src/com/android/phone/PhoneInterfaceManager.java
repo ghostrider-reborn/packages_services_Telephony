@@ -74,7 +74,6 @@ import android.telephony.UiccSlotInfo;
 import android.telephony.UssdResponse;
 import android.telephony.VisualVoicemailSmsFilterSettings;
 import android.telephony.ims.aidl.IImsConfig;
-import android.telephony.ims.aidl.IImsMmTelFeature;
 import android.telephony.ims.aidl.IImsRcsFeature;
 import android.telephony.ims.aidl.IImsRegistration;
 import android.telephony.ims.stub.ImsRegistrationImplBase;
@@ -86,6 +85,9 @@ import android.util.Pair;
 import android.util.Slog;
 
 import com.android.ims.ImsManager;
+import com.android.ims.internal.IImsMMTelFeature;
+import com.android.ims.internal.IImsRcsFeature;
+import com.android.ims.internal.IImsRegistration;
 import com.android.ims.internal.IImsServiceFeatureCallback;
 import com.android.internal.telephony.CallManager;
 import com.android.internal.telephony.CallStateException;
@@ -2687,32 +2689,26 @@ public class PhoneInterfaceManager extends ITelephony.Stub {
     }
 
     /**
-     * Enables IMS for the framework. This will trigger IMS registration and ImsFeature capability
-     * status updates, if not already enabled.
-     */
-    public void enableIms(int slotId) {
-        enforceModifyPermission();
-        PhoneFactory.getImsResolver().enableIms(slotId);
-    }
-
-    /**
-     * Disables IMS for the framework. This will trigger IMS de-registration and trigger ImsFeature
-     * status updates to disabled.
-     */
-    public void disableIms(int slotId) {
-        enforceModifyPermission();
-        PhoneFactory.getImsResolver().disableIms(slotId);
-    }
-
-    /**
-     * Returns the {@link IImsMmTelFeature} that corresponds to the given slot Id for the MMTel
+     * Returns the {@link IImsMMTelFeature} that corresponds to the given slot Id for the MMTel
      * feature or {@link null} if the service is not available. If the feature is available, the
      * {@link IImsServiceFeatureCallback} callback is registered as a listener for feature updates.
      */
-    public IImsMmTelFeature getMmTelFeatureAndListen(int slotId,
+    public IImsMMTelFeature getMMTelFeatureAndListen(int slotId,
             IImsServiceFeatureCallback callback) {
         enforceModifyPermission();
-        return PhoneFactory.getImsResolver().getMmTelFeatureAndListen(slotId, callback);
+        return PhoneFactory.getImsResolver().getMMTelFeatureAndListen(slotId, callback);
+    }
+
+    /**
+     * Returns the {@link IImsMMTelFeature} that corresponds to the given slot Id for the MMTel
+     * feature during emergency calling or {@link null} if the service is not available. If the
+     * feature is available, the {@link IImsServiceFeatureCallback} callback is registered as a
+     * listener for feature updates.
+     */
+    public IImsMMTelFeature getEmergencyMMTelFeatureAndListen(int slotId,
+            IImsServiceFeatureCallback callback) {
+        enforceModifyPermission();
+        return PhoneFactory.getImsResolver().getEmergencyMMTelFeatureAndListen(slotId, callback);
     }
 
     /**
@@ -2733,15 +2729,6 @@ public class PhoneInterfaceManager extends ITelephony.Stub {
     public IImsRegistration getImsRegistration(int slotId, int feature) throws RemoteException {
         enforceModifyPermission();
         return PhoneFactory.getImsResolver().getImsRegistration(slotId, feature);
-    }
-
-    /**
-     * Returns the {@link IImsConfig} structure associated with the slotId and feature
-     * specified.
-     */
-    public IImsConfig getImsConfig(int slotId, int feature) throws RemoteException {
-        enforceModifyPermission();
-        return PhoneFactory.getImsResolver().getImsConfig(slotId, feature);
     }
 
     /**

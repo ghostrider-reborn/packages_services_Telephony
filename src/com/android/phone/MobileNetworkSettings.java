@@ -1803,7 +1803,7 @@ public class MobileNetworkSettings extends Activity  {
 
             try {
                 if ((mImsMgr == null
-                        || mImsMgr.getImsServiceState() != ImsFeature.STATE_READY
+                        || mImsMgr.getImsServiceStatus() != ImsFeature.STATE_READY
                         || !mImsMgr.isVolteEnabledByPlatform()
                         || !mImsMgr.isVolteProvisionedOnDevice()
                         || carrierConfig.getBoolean(
